@@ -58,4 +58,17 @@ class DatabaseHelper {
     );
     return results.map((e) => TaskModel.fromMap(e)).first;
   }
+
+  // membuat method untuk memperbarui data
+  Future<void> updateTask(TaskModel taskModel) async {
+    final db = await database;
+    await db.update(_tabelName, taskModel.toMap(),
+        where: 'id = ?', whereArgs: [taskModel.id]);
+  }
+
+  // membuat method untuk menghapus data
+  Future<void> deleteTask(int id) async {
+    final db = await database;
+    await db.delete(_tabelName, where: 'id = ?', whereArgs: [id]);
+  }
 }
