@@ -1,6 +1,8 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../model/task_model.dart';
+
 class DatabaseHelper {
   static DatabaseHelper? _databaseHelper;
   static late Database _database;
@@ -31,5 +33,29 @@ class DatabaseHelper {
       );
     }, version: 1);
     return db;
+  }
+
+  //menambahkan data ke tabel
+  Future<void> insertTask(TaskModel taskModel) async {
+    final Database db = await database;
+    await db.insert(_tabelName, taskModel.toMap());
+  }
+
+  //membuat method untuk membaca data
+  Future<List<TaskModel>> getTasks() async {
+    final Database db = await database;
+    List<Map<String, dynamic>> results = await db.query(_tabelName);
+    return results.map((e) => TaskModel.fromMap(e)).toList();
+  }
+
+  // Membuat method untuk mengambil data dengan id
+  Future<TaskModel> getTaskById(int id) async {
+    final Database db = await database;
+    List<Map<String, dynamic>> results = await db.query(
+      _tabelName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return results.map((e) => TaskModel.fromMap(e)).first;
   }
 }
